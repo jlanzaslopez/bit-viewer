@@ -176,7 +176,7 @@
   /* ── Two-column layout ── */
   .cols {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
     gap: 1.25rem;
     align-items: start;
   }
@@ -191,8 +191,8 @@
     border-radius: 8px;
     padding: 1.25rem 1.25rem 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    /* overflow visible para que el scale no corte */
-    overflow: visible;
+    overflow: hidden;
+    min-width: 0;
   }
   /* Contenedor interno que escalamos */
   .bit-grid-scaler {
@@ -673,28 +673,29 @@
   const bitGridScaler = document.getElementById('bitGridScaler');
 
   function scaleGrid() {
-    // Reset scale para medir tamaño natural
+    // Reset para medir tamaño natural
     bitGridScaler.style.transform = 'none';
-    bitGridWrap.style.height = '';
+    bitGridScaler.style.width     = '';
+    bitGridWrap.style.height      = '';
 
-    const wrapW   = bitGridWrap.clientWidth - 40; // padding x2
-    const gridW   = bitGridScaler.scrollWidth;
-    const gridH   = bitGridScaler.scrollHeight;
+    // Usamos getBoundingClientRect para medir el wrap disponible real
+    const available = bitGridWrap.getBoundingClientRect().width - 40; // padding 20px cada lado
+    const natural   = bitGridScaler.scrollWidth;
+    const naturalH  = bitGridScaler.scrollHeight;
 
-    if (gridW > wrapW && wrapW > 0) {
-      const ratio = wrapW / gridW;
-      bitGridScaler.style.transform = `scale(${ratio})`;
-      // Ajustar altura del wrapper para que no deje hueco
-      bitGridWrap.style.height = (gridH * ratio + 40) + 'px';
-    } else {
-      bitGridScaler.style.transform = 'none';
-      bitGridWrap.style.height = '';
+    if (natural > available && available > 0) {
+      const ratio = available / natural;
+      bitGridScaler.style.transform      = `scale(${ratio})`;
+      bitGridScaler.style.transformOrigin = 'top left';
+      // Fijar ancho del scaler para que no ocupe más que el wrap
+      bitGridScaler.style.width = natural + 'px';
+      // Ajustar altura del wrapper al tamaño escalado
+      bitGridWrap.style.height = Math.ceil(naturalH * ratio) + 40 + 'px';
     }
   }
 
-  // Escalar tras cada render y al redimensionar
-  const resizeObs = new ResizeObserver(() => scaleGrid());
-  resizeObs.observe(bitGridWrap);
+  // Re-escalar cuando cambie el tamaño del contenedor
+  new ResizeObserver(() => requestAnimationFrame(scaleGrid)).observe(bitGridWrap);
 
   setValue(0);
 </script>
