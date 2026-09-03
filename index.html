@@ -184,14 +184,21 @@
     grid-template-columns: 1fr;
   }
 
-  /* ── Left: bit grid ── */
+  /* ── Bit grid wrapper con scale ── */
   .bit-grid-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.25rem 1.25rem 1rem;
-    overflow-x: auto;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    /* overflow visible para que el scale no corte */
+    overflow: visible;
+  }
+  /* Contenedor interno que escalamos */
+  .bit-grid-scaler {
+    transform-origin: top left;
+    display: inline-block;
+    width: max-content;
   }
   .bit-row {
     display: flex;
@@ -397,8 +404,10 @@
 
   <!-- Two-column area -->
   <div class="cols no-table" id="cols">
-    <div class="bit-grid-wrap">
-      <div id="bitGrid"></div>
+    <div class="bit-grid-wrap" id="bitGridWrap">
+      <div class="bit-grid-scaler" id="bitGridScaler">
+        <div id="bitGrid"></div>
+      </div>
     </div>
     <div class="signal-table-wrap" id="signalTableWrap" style="display:none">
       <table class="signal-table">
@@ -617,6 +626,8 @@
       signalTableWrap.style.display = 'none';
       cols.classList.add('no-table');
     }
+    // Pequeño delay para que el DOM se pinte antes de medir
+    requestAnimationFrame(scaleGrid);
   }
 
   function setValue(val) {
@@ -656,6 +667,34 @@
     btn.classList.add('active');
     setValue(clamp(currentValue, currentBits));
   });
+
+  // ── Escalado dinámico del grid de bits ───────────────────────────────────
+  const bitGridWrap   = document.getElementById('bitGridWrap');
+  const bitGridScaler = document.getElementById('bitGridScaler');
+
+  function scaleGrid() {
+    // Reset scale para medir tamaño natural
+    bitGridScaler.style.transform = 'none';
+    bitGridWrap.style.height = '';
+
+    const wrapW   = bitGridWrap.clientWidth - 40; // padding x2
+    const gridW   = bitGridScaler.scrollWidth;
+    const gridH   = bitGridScaler.scrollHeight;
+
+    if (gridW > wrapW && wrapW > 0) {
+      const ratio = wrapW / gridW;
+      bitGridScaler.style.transform = `scale(${ratio})`;
+      // Ajustar altura del wrapper para que no deje hueco
+      bitGridWrap.style.height = (gridH * ratio + 40) + 'px';
+    } else {
+      bitGridScaler.style.transform = 'none';
+      bitGridWrap.style.height = '';
+    }
+  }
+
+  // Escalar tras cada render y al redimensionar
+  const resizeObs = new ResizeObserver(() => scaleGrid());
+  resizeObs.observe(bitGridWrap);
 
   setValue(0);
 </script>
