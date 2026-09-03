@@ -87,8 +87,14 @@
     transition: color 0.15s, border-color 0.15s;
     white-space: nowrap;
   }
-  .tab-btn:hover { color: #f1f5f9; }
-  .tab-btn.active { color: #fff; border-bottom-color: var(--accent); }
+  .nav-build {
+    margin-left: auto;
+    font-size: 0.62rem;
+    color: #475569;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .nav-build span { color: #64748b; }
 
   /* ── Page body ── */
   .page {
@@ -375,6 +381,7 @@
   <button class="tab-btn active" data-tab="general">GENERAL</button>
   <button class="tab-btn" data-tab="bomba">BOMBA</button>
   <button class="tab-btn" data-tab="valvula">VÁLVULA</button>
+  <div class="nav-build">última actualización&nbsp;<span>2026-09-03 08:17:58 UTC</span></div>
 </nav>
 
 <!-- ── Page ── -->
