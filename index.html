@@ -381,7 +381,7 @@
   <button class="tab-btn active" data-tab="general">GENERAL</button>
   <button class="tab-btn" data-tab="bomba">BOMBA</button>
   <button class="tab-btn" data-tab="valvula">VÁLVULA</button>
-  <div class="nav-build">última actualización&nbsp;<span>2026-09-03 08:17:58 UTC</span></div>
+  <div class="nav-build">última actualización&nbsp;<span id="buildTs"></span></div>
 </nav>
 
 <!-- ── Page ── -->
@@ -703,6 +703,14 @@
 
   // Re-escalar cuando cambie el tamaño del contenedor
   new ResizeObserver(() => requestAnimationFrame(scaleGrid)).observe(bitGridWrap);
+
+  // ── Build timestamp (hora local del navegador) ────────────────────────────
+  const BUILD_UTC = '2026-09-03T08:17:58Z';
+  const buildDate = new Date(BUILD_UTC);
+  document.getElementById('buildTs').textContent = buildDate.toLocaleString(undefined, {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
 
   setValue(0);
 </script>
