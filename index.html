@@ -402,7 +402,104 @@
       },
     ],
     valvula: [
-      // Se añadirán cuando Javi pase la lista
+      {
+        bit: 0, name: 'Fuera de servicio',
+        states: [
+          { val: 0, label: 'En servicio',       cls: 'badge-on',   desc: 'Válvula disponible para operación' },
+          { val: 1, label: 'Fuera de servicio', cls: 'badge-err',  desc: 'Válvula excluida de operación' },
+        ]
+      },
+      {
+        bit: 1, name: 'Auto / Manual',
+        states: [
+          { val: 0, label: 'Manual', cls: 'badge-warn', desc: 'Modo manual activo' },
+          { val: 1, label: 'Auto',   cls: 'badge-on',   desc: 'Modo automático activo' },
+        ]
+      },
+      {
+        bit: 2, name: 'Disponible — abrir',
+        states: [
+          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir orden de apertura' },
+          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir orden de apertura' },
+        ]
+      },
+      {
+        bit: 3, name: 'Disponible — cerrar',
+        states: [
+          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir orden de cierre' },
+          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir orden de cierre' },
+        ]
+      },
+      {
+        bit: 4, name: 'Abierta',
+        states: [
+          { val: 0, label: 'No abierta', cls: 'badge-off', desc: 'Fin de carrera de apertura no activo' },
+          { val: 1, label: 'Abierta',    cls: 'badge-on',  desc: 'Fin de carrera de apertura activo' },
+        ]
+      },
+      {
+        bit: 5, name: 'Cerrada',
+        states: [
+          { val: 0, label: 'No cerrada', cls: 'badge-off', desc: 'Fin de carrera de cierre no activo' },
+          { val: 1, label: 'Cerrada',    cls: 'badge-on',  desc: 'Fin de carrera de cierre activo' },
+        ]
+      },
+      {
+        bit: 6, name: 'Remoto / Local',
+        states: [
+          { val: 0, label: 'Local',   cls: 'badge-warn', desc: 'Control desde panel local' },
+          { val: 1, label: 'Remoto',  cls: 'badge-on',   desc: 'Control desde SCADA / PLC' },
+        ]
+      },
+      {
+        bit: 7, name: 'Orden abrir',
+        states: [
+          { val: 0, label: 'Sin orden', cls: 'badge-off', desc: 'Sin orden de apertura activa' },
+          { val: 1, label: 'Abrir',     cls: 'badge-on',  desc: 'Orden de apertura enviada' },
+        ]
+      },
+      {
+        bit: 8, name: 'Orden cerrar',
+        states: [
+          { val: 0, label: 'Sin orden', cls: 'badge-off', desc: 'Sin orden de cierre activa' },
+          { val: 1, label: 'Cerrar',    cls: 'badge-on',  desc: 'Orden de cierre enviada' },
+        ]
+      },
+      {
+        bit: 9, name: 'Abriendo',
+        states: [
+          { val: 0, label: 'Detenida', cls: 'badge-off', desc: 'Válvula no está en movimiento de apertura' },
+          { val: 1, label: 'Abriendo', cls: 'badge-on',  desc: 'Válvula en tránsito hacia abierta' },
+        ]
+      },
+      {
+        bit: 10, name: 'Cerrando',
+        states: [
+          { val: 0, label: 'Detenida', cls: 'badge-off', desc: 'Válvula no está en movimiento de cierre' },
+          { val: 1, label: 'Cerrando', cls: 'badge-on',  desc: 'Válvula en tránsito hacia cerrada' },
+        ]
+      },
+      {
+        bit: 11, name: 'Posición alcanzada',
+        states: [
+          { val: 0, label: 'En tránsito',        cls: 'badge-warn', desc: 'Aún no ha llegado a la posición destino' },
+          { val: 1, label: 'Posición alcanzada', cls: 'badge-on',   desc: 'Válvula ha llegado a la posición solicitada' },
+        ]
+      },
+      {
+        bit: 12, name: 'Disponible — mover',
+        states: [
+          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir órdenes de movimiento' },
+          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir cualquier orden de movimiento' },
+        ]
+      },
+      {
+        bit: 13, name: 'Parada',
+        states: [
+          { val: 0, label: 'En movimiento', cls: 'badge-on',  desc: 'Válvula en maniobra' },
+          { val: 1, label: 'Parada',        cls: 'badge-off', desc: 'Válvula detenida, sin maniobra activa' },
+        ]
+      },
     ]
   };
 
