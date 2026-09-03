@@ -15,7 +15,6 @@
     --border:   #d1d5db;
     --led-off:  #e5e7eb;
     --led-on:   #16a34a;
-    --led-glow: #22c55e;
     --dim:      #9ca3af;
     --text:     #111827;
     --accent:   #2563eb;
@@ -35,10 +34,7 @@
     gap: 2rem;
   }
 
-  header {
-    text-align: center;
-  }
-
+  header { text-align: center; }
   header h1 {
     font-size: 0.75rem;
     letter-spacing: 0.25em;
@@ -46,7 +42,6 @@
     text-transform: uppercase;
     margin-bottom: 0.25rem;
   }
-
   header p {
     font-size: 1.5rem;
     font-weight: 700;
@@ -54,7 +49,35 @@
     letter-spacing: 0.05em;
   }
 
-  /* Input section */
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    width: 100%;
+    max-width: 900px;
+  }
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--dim);
+    cursor: pointer;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Input panel ── */
   .input-panel {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -64,17 +87,15 @@
     flex-direction: column;
     gap: 1.2rem;
     width: 100%;
-    max-width: 640px;
+    max-width: 900px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
-
   .input-row {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
   }
-
   .input-row label {
     font-size: 0.75rem;
     color: var(--dim);
@@ -82,7 +103,6 @@
     letter-spacing: 0.15em;
     min-width: 6rem;
   }
-
   input[type="number"], input[type="text"] {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -97,21 +117,10 @@
     flex: 1;
     min-width: 140px;
   }
+  input[type="number"]:focus, input[type="text"]:focus { border-color: var(--accent); }
+  input.error { border-color: var(--warn) !important; color: var(--warn) !important; }
 
-  input[type="number"]:focus, input[type="text"]:focus {
-    border-color: var(--accent);
-  }
-
-  input[type="number"].error {
-    border-color: var(--warn);
-    color: var(--warn);
-  }
-
-  .mode-group {
-    display: flex;
-    gap: 0.5rem;
-  }
-
+  .mode-group { display: flex; gap: 0.5rem; }
   .mode-btn {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -125,19 +134,9 @@
     letter-spacing: 0.1em;
     transition: all 0.15s;
   }
+  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .mode-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
 
-  .mode-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #ffffff;
-  }
-
-  .mode-btn:hover:not(.active) {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* Summary bar */
   .summary {
     display: flex;
     gap: 1.5rem;
@@ -145,17 +144,14 @@
     font-size: 0.8rem;
     color: var(--dim);
   }
-
-  .summary span strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-
+  .summary span strong { color: var(--text); font-weight: 600; }
   .summary span.hex strong { color: #b45309; }
   .summary span.oct strong { color: #0369a1; }
   .summary span.bits-on strong { color: #16a34a; }
 
-  /* Bit grid */
+  .err-msg { font-size: 0.75rem; color: var(--warn); height: 1rem; }
+
+  /* ── Bit grid ── */
   .bit-grid-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -166,35 +162,14 @@
     overflow-x: auto;
     box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
-
-  .bit-group-label {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0;
-    margin-bottom: 0.35rem;
-    padding-right: 0;
-  }
-
-  .nibble-idx {
-    font-size: 0.6rem;
-    color: var(--dim);
-    width: calc(4 * 44px + 3 * 6px + 16px); /* 4 LEDs + gaps + separator */
-    text-align: center;
-  }
-
   .bit-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 6px;
     justify-content: flex-end;
     margin-bottom: 0.5rem;
   }
-
-  .nibble {
-    display: flex;
-    gap: 6px;
-  }
-
+  .nibble { display: flex; gap: 6px; }
   .nibble-sep {
     width: 16px;
     display: flex;
@@ -203,9 +178,8 @@
     color: var(--border);
     font-size: 0.85rem;
     user-select: none;
+    padding-bottom: 8px;
   }
-
-  /* Individual bit */
   .bit {
     display: flex;
     flex-direction: column;
@@ -214,14 +188,11 @@
     cursor: pointer;
     user-select: none;
   }
-
   .bit-idx {
     font-size: 0.55rem;
     color: var(--dim);
-    letter-spacing: 0;
     height: 10px;
   }
-
   .led {
     width: 38px;
     height: 38px;
@@ -235,41 +206,16 @@
     font-weight: 700;
     color: #9ca3af;
     transition: background 0.1s, box-shadow 0.1s, color 0.1s, border-color 0.1s;
-    position: relative;
   }
-
   .led.on {
     background: var(--led-on);
     border-color: #15803d;
     color: #ffffff;
     box-shadow: 0 0 10px #16a34a55, 0 0 2px #16a34a;
   }
+  .bit:hover .led { border-color: var(--accent); }
 
-  .bit:hover .led {
-    border-color: var(--accent);
-  }
-
-  /* Index row below */
-  .idx-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    justify-content: flex-end;
-    margin-top: 2px;
-  }
-
-  .idx-cell {
-    width: 38px;
-    text-align: center;
-    font-size: 0.58rem;
-    color: var(--dim);
-  }
-
-  .idx-sep {
-    width: 16px;
-  }
-
-  /* Byte values below */
+  /* Byte chips */
   .byte-values {
     margin-top: 1rem;
     display: flex;
@@ -277,7 +223,6 @@
     justify-content: flex-end;
     flex-wrap: wrap;
   }
-
   .byte-chip {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -286,30 +231,73 @@
     font-size: 0.7rem;
     color: var(--dim);
   }
+  .byte-chip strong { color: var(--text); font-weight: 600; }
 
-  .byte-chip strong {
-    color: var(--text);
+  /* ── Signal table (BOMBA / VALVULA) ── */
+  .signal-table-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+  .signal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .signal-table thead tr {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+  }
+  .signal-table th {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dim);
     font-weight: 600;
   }
-
-  .byte-chip.msb { border-color: #9ca3af; }
-
-  /* Error */
-  .err-msg {
-    font-size: 0.75rem;
-    color: var(--warn);
-    height: 1rem;
+  .signal-table td {
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
   }
+  .signal-table tr:last-child td { border-bottom: none; }
+  .signal-table tr:hover td { background: #f9fafb; }
+
+  .td-bit {
+    font-weight: 700;
+    color: var(--dim);
+    width: 3rem;
+    text-align: center;
+  }
+  .td-name { font-weight: 600; color: var(--text); width: 10rem; }
+  .td-state { flex: 1; }
+
+  .state-badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .badge-on  { background: #dcfce7; color: #15803d; }
+  .badge-off { background: #f3f4f6; color: #6b7280; }
+  .badge-warn { background: #fef9c3; color: #854d0e; }
+  .badge-err  { background: #fee2e2; color: #991b1b; }
 
   /* Responsive */
   @media (max-width: 520px) {
     .led { width: 30px; height: 30px; font-size: 0.75rem; }
-    .nibble-idx { width: calc(4 * 36px + 3 * 4px + 12px); }
-    .idx-cell { width: 30px; }
-    .idx-sep { width: 12px; }
     .nibble { gap: 4px; }
     .bit-row { gap: 4px; }
     .nibble-sep { width: 12px; }
+    .tab-btn { padding: 0.6rem 0.8rem; font-size: 0.72rem; }
   }
 </style>
 </head>
@@ -320,6 +308,14 @@
   <p>Bit Viewer</p>
 </header>
 
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="general">GENERAL</button>
+  <button class="tab-btn" data-tab="bomba">BOMBA</button>
+  <button class="tab-btn" data-tab="valvula">VÁLVULA</button>
+</div>
+
+<!-- Input panel (compartido) -->
 <div class="input-panel">
   <div class="input-row">
     <label>Valor</label>
@@ -327,7 +323,6 @@
     <input type="text"   id="hexInput" value="0x0000" placeholder="Hex 0x...">
   </div>
   <div class="err-msg" id="errMsg"></div>
-
   <div class="input-row">
     <label>Tamaño</label>
     <div class="mode-group" id="sizeGroup">
@@ -336,41 +331,117 @@
       <button class="mode-btn" data-bits="32">32 bit</button>
     </div>
   </div>
-
   <div class="summary" id="summary"></div>
 </div>
 
+<!-- Bit grid (siempre visible) -->
 <div class="bit-grid-wrap">
   <div id="bitGrid"></div>
 </div>
 
+<!-- Signal table (solo en BOMBA / VALVULA) -->
+<div class="signal-table-wrap" id="signalTableWrap" style="display:none">
+  <table class="signal-table">
+    <thead>
+      <tr>
+        <th>Bit</th>
+        <th>Señal</th>
+        <th>Estado actual</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody id="signalTableBody"></tbody>
+  </table>
+</div>
+
 <script>
-  let currentBits = 16;
+  // ── Definiciones de señales ──────────────────────────────────────────────
+  const SIGNALS = {
+    bomba: [
+      {
+        bit: 0, name: 'Fuera de servicio',
+        states: [
+          { val: 0, label: 'En servicio',       cls: 'badge-on',   desc: 'Equipo disponible para operación' },
+          { val: 1, label: 'Fuera de servicio', cls: 'badge-err',  desc: 'Equipo excluido de operación' },
+        ]
+      },
+      {
+        bit: 1, name: 'Manual / Auto',
+        states: [
+          { val: 0, label: 'Manual',  cls: 'badge-warn', desc: 'Modo manual activo' },
+          { val: 1, label: 'Auto',    cls: 'badge-on',   desc: 'Modo automático activo' },
+        ]
+      },
+      {
+        bit: 2, name: 'Disponible',
+        states: [
+          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'Equipo no disponible' },
+          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Equipo listo para arrancar' },
+        ]
+      },
+      {
+        bit: 3, name: 'Conf. marcha',
+        states: [
+          { val: 0, label: 'Sin confirmación', cls: 'badge-off',  desc: 'Sin retorno de marcha' },
+          { val: 1, label: 'Marcha confirmada', cls: 'badge-on',  desc: 'Retorno de marcha activo' },
+        ]
+      },
+      {
+        bit: 4, name: 'Orden marcha',
+        states: [
+          { val: 0, label: 'Parada', cls: 'badge-off', desc: 'Sin orden de marcha' },
+          { val: 1, label: 'Marcha', cls: 'badge-on',  desc: 'Orden de marcha enviada' },
+        ]
+      },
+      {
+        bit: 5, name: 'Local / Remoto',
+        states: [
+          { val: 0, label: 'Local',   cls: 'badge-warn', desc: 'Control desde panel local' },
+          { val: 1, label: 'Remoto',  cls: 'badge-on',   desc: 'Control desde SCADA / PLC' },
+        ]
+      },
+    ],
+    valvula: [
+      // Se añadirán cuando Javi pase la lista
+    ]
+  };
+
+  // ── Estado global ────────────────────────────────────────────────────────
+  let currentBits  = 16;
   let currentValue = 0;
-  let updating = false;
+  let currentTab   = 'general';
+  let updating     = false;
 
-  const numInput  = document.getElementById('numInput');
-  const hexInput  = document.getElementById('hexInput');
-  const errMsg    = document.getElementById('errMsg');
-  const sizeGroup = document.getElementById('sizeGroup');
-  const summary   = document.getElementById('summary');
-  const bitGrid   = document.getElementById('bitGrid');
+  const numInput        = document.getElementById('numInput');
+  const hexInput        = document.getElementById('hexInput');
+  const errMsg          = document.getElementById('errMsg');
+  const sizeGroup       = document.getElementById('sizeGroup');
+  const summary         = document.getElementById('summary');
+  const bitGrid         = document.getElementById('bitGrid');
+  const signalTableWrap = document.getElementById('signalTableWrap');
+  const signalTableBody = document.getElementById('signalTableBody');
 
+  // ── Tabs ─────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = btn.dataset.tab;
+      renderAll();
+    });
+  });
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
   function maxVal(bits) { return (1 << bits) >>> 0; }
-  function clamp(v, bits) { return ((v >>> 0) & ((bits === 32) ? 0xFFFFFFFF : (maxVal(bits) - 1))); }
+  function clamp(v, bits) { return (v >>> 0) & (bits === 32 ? 0xFFFFFFFF : maxVal(bits) - 1); }
+  function pad(n, len, radix = 2) { return n.toString(radix).toUpperCase().padStart(len, '0'); }
 
-  function pad(n, len, radix = 2) {
-    return n.toString(radix).toUpperCase().padStart(len, '0');
-  }
-
+  // ── Summary ──────────────────────────────────────────────────────────────
   function updateSummary(val, bits) {
     const hexDigits = bits / 4;
     const bitsOn = val.toString(2).split('').filter(b => b === '1').length;
-    const msb = (val >>> (bits - 1)) & 1;
-    const signed = bits < 32
-      ? (msb ? val - maxVal(bits) : val)
-      : (msb ? (val | 0) : val); // int32 for 32-bit
-
+    const msb    = (val >>> (bits - 1)) & 1;
+    const signed = bits < 32 ? (msb ? val - maxVal(bits) : val) : (msb ? (val | 0) : val);
     summary.innerHTML = `
       <span>DEC <strong>${val}</strong></span>
       <span class="hex">HEX <strong>0x${pad(val, hexDigits, 16)}</strong></span>
@@ -380,99 +451,51 @@
     `;
   }
 
+  // ── Bit grid ─────────────────────────────────────────────────────────────
   function renderGrid(val, bits) {
     bitGrid.innerHTML = '';
-
     const nibbleCount = bits / 4;
-    // Build nibbles right-to-left (LSB group on right)
-    const nibbles = [];
-    for (let n = 0; n < nibbleCount; n++) {
-      const nibbleBits = [];
-      for (let b = 0; b < 4; b++) {
-        const bitIdx = n * 4 + b; // bit index from LSB
-        nibbleBits.push(bitIdx);
-      }
-      nibbles.push(nibbleBits); // each nibble: [lsb..msb] within nibble, left=bit3, right=bit0 visually reversed below
-    }
-    // We want visual: MSB on left, LSB on right
-    // Nibbles displayed left=MSB nibble, right=LSB nibble
-    // Within nibble: left=higher bit, right=lower bit
-
-    // Nibble index labels (byte groups)
-    const nibbleLabelRow = document.createElement('div');
-    nibbleLabelRow.className = 'bit-group-label';
-
-    const bitRow = document.createElement('div');
-    bitRow.className = 'bit-row';
-
-    const idxRow = document.createElement('div');
-    idxRow.className = 'idx-row';
-
-    // Byte value chips
+    const bitRow      = document.createElement('div');
+    bitRow.className  = 'bit-row';
     const byteValueDiv = document.createElement('div');
     byteValueDiv.className = 'byte-values';
 
-    // Iterate nibbles from MSB to LSB (for display left-to-right)
     for (let nIdx = nibbleCount - 1; nIdx >= 0; nIdx--) {
-      // Nibble separator between nibble groups (not before first)
       if (nIdx < nibbleCount - 1) {
         const sep = document.createElement('div');
-        sep.className = 'nibble-sep';
+        sep.className   = 'nibble-sep';
         sep.textContent = '·';
         bitRow.appendChild(sep);
-
-        const idxSep = document.createElement('div');
-        idxSep.className = 'idx-sep';
-        idxRow.appendChild(idxSep);
       }
-
       const nibbleDiv = document.createElement('div');
       nibbleDiv.className = 'nibble';
 
-      const idxNibbleDiv = document.createElement('div');
-      idxNibbleDiv.className = 'nibble';
-
-      // Within nibble, display bit3..bit0 (high to low)
       for (let b = 3; b >= 0; b--) {
         const bitIdx = nIdx * 4 + b;
-        const isOn = (val >>> bitIdx) & 1;
+        const isOn   = (val >>> bitIdx) & 1;
 
         const bitEl = document.createElement('div');
         bitEl.className = 'bit';
-        bitEl.dataset.bit = bitIdx;
 
         const bitIdxLabel = document.createElement('div');
-        bitIdxLabel.className = 'bit-idx';
+        bitIdxLabel.className   = 'bit-idx';
         bitIdxLabel.textContent = bitIdx;
 
         const led = document.createElement('div');
-        led.className = 'led' + (isOn ? ' on' : '');
+        led.className   = 'led' + (isOn ? ' on' : '');
         led.textContent = isOn ? '1' : '0';
 
         bitEl.appendChild(bitIdxLabel);
         bitEl.appendChild(led);
-
-        // Click to toggle
         bitEl.addEventListener('click', () => {
-          const toggled = currentValue ^ (1 << bitIdx);
-          setValue(clamp(toggled, currentBits));
+          setValue(clamp(currentValue ^ (1 << bitIdx), currentBits));
         });
-
         nibbleDiv.appendChild(bitEl);
-
-        // idx below (hidden, already in bit-idx)
-        const idxCell = document.createElement('div');
-        idxCell.className = 'idx-cell';
-        idxNibbleDiv.appendChild(idxCell);
       }
-
       bitRow.appendChild(nibbleDiv);
-      idxRow.appendChild(idxNibbleDiv);
     }
-
     bitGrid.appendChild(bitRow);
 
-    // Byte chips (only for >=16 bit)
     if (bits >= 16) {
       const byteCount = bits / 8;
       for (let b = byteCount - 1; b >= 0; b--) {
@@ -489,32 +512,68 @@
     }
   }
 
+  // ── Signal table ──────────────────────────────────────────────────────────
+  function renderSignalTable(val, tab) {
+    const signals = SIGNALS[tab];
+    if (!signals || signals.length === 0) {
+      signalTableWrap.style.display = 'none';
+      return;
+    }
+    signalTableWrap.style.display = 'block';
+    signalTableBody.innerHTML = '';
+
+    signals.forEach(sig => {
+      const bitVal = (val >>> sig.bit) & 1;
+      const state  = sig.states.find(s => s.val === bitVal) || sig.states[0];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="td-bit">${sig.bit}</td>
+        <td class="td-name">${sig.name}</td>
+        <td class="td-state"><span class="state-badge ${state.cls}">${state.label}</span></td>
+        <td style="color:var(--dim);font-size:0.75rem">${state.desc}</td>
+      `;
+      signalTableBody.appendChild(tr);
+    });
+  }
+
+  // ── Render all ───────────────────────────────────────────────────────────
+  function renderAll() {
+    updateSummary(currentValue, currentBits);
+    renderGrid(currentValue, currentBits);
+    if (currentTab === 'bomba' || currentTab === 'valvula') {
+      renderSignalTable(currentValue, currentTab);
+    } else {
+      signalTableWrap.style.display = 'none';
+    }
+  }
+
+  // ── setValue ─────────────────────────────────────────────────────────────
   function setValue(val) {
     if (updating) return;
     updating = true;
     currentValue = clamp(val, currentBits);
     const hexDigits = currentBits / 4;
-    numInput.value = currentValue;
-    hexInput.value = '0x' + pad(currentValue, hexDigits, 16);
-    hexInput.className = '';
-    numInput.className = '';
+    numInput.value   = currentValue;
+    hexInput.value   = '0x' + pad(currentValue, hexDigits, 16);
+    hexInput.classList.remove('error');
+    numInput.classList.remove('error');
     errMsg.textContent = '';
-    updateSummary(currentValue, currentBits);
-    renderGrid(currentValue, currentBits);
+    renderAll();
     updating = false;
   }
 
+  // ── Inputs ───────────────────────────────────────────────────────────────
   numInput.addEventListener('input', () => {
     if (updating) return;
-    const raw = parseInt(numInput.value, 10);
+    const raw  = parseInt(numInput.value, 10);
+    const maxv = currentBits === 32 ? 0xFFFFFFFF : maxVal(currentBits) - 1;
     if (isNaN(raw) || raw < 0) {
-      numInput.className = 'error';
+      numInput.classList.add('error');
       errMsg.textContent = 'Introduce un entero positivo';
       return;
     }
-    const maxv = currentBits === 32 ? 0xFFFFFFFF : maxVal(currentBits) - 1;
     if (raw > maxv) {
-      numInput.className = 'error';
+      numInput.classList.add('error');
       errMsg.textContent = `Máximo para ${currentBits} bits: ${maxv}`;
       return;
     }
@@ -523,17 +582,17 @@
 
   hexInput.addEventListener('input', () => {
     if (updating) return;
-    let raw = hexInput.value.trim().replace(/^0x/i, '');
+    const raw    = hexInput.value.trim().replace(/^0x/i, '');
     const parsed = parseInt(raw, 16);
     if (isNaN(parsed) || parsed < 0) {
-      hexInput.className = 'error';
+      hexInput.classList.add('error');
       errMsg.textContent = 'Formato hex inválido (usa 0x1A2B)';
       return;
     }
     setValue(parsed);
   });
 
-  sizeGroup.addEventListener('click', (e) => {
+  sizeGroup.addEventListener('click', e => {
     const btn = e.target.closest('.mode-btn');
     if (!btn) return;
     currentBits = parseInt(btn.dataset.bits);
