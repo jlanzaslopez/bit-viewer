@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bit Viewer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #f3f4f6;
+    --panel:    #ffffff;
+    --border:   #d1d5db;
+    --led-off:  #e5e7eb;
+    --led-on:   #16a34a;
+    --led-glow: #22c55e;
+    --dim:      #9ca3af;
+    --text:     #111827;
+    --accent:   #2563eb;
+    --warn:     #dc2626;
+    --mono:     'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    gap: 2rem;
+  }
+
+  header {
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  header p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+
+  /* Input section */
+  .input-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .input-row label {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    min-width: 6rem;
+  }
+
+  input[type="number"], input[type="text"] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    transition: border-color 0.15s;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  input[type="number"]:focus, input[type="text"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="number"].error {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+
+  .mode-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .mode-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.15s;
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+  }
+
+  .mode-btn:hover:not(.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Summary bar */
+  .summary {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--dim);
+  }
+
+  .summary span strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .summary span.hex strong { color: #b45309; }
+  .summary span.oct strong { color: #0369a1; }
+  .summary span.bits-on strong { color: #16a34a; }
+
+  /* Bit grid */
+  .bit-grid-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+    overflow-x: auto;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  .bit-group-label {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0;
+    margin-bottom: 0.35rem;
+    padding-right: 0;
+  }
+
+  .nibble-idx {
+    font-size: 0.6rem;
+    color: var(--dim);
+    width: calc(4 * 44px + 3 * 6px + 16px); /* 4 LEDs + gaps + separator */
+    text-align: center;
+  }
+
+  .bit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+  }
+
+  .nibble {
+    display: flex;
+    gap: 6px;
+  }
+
+  .nibble-sep {
+    width: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--border);
+    font-size: 0.85rem;
+    user-select: none;
+  }
+
+  /* Individual bit */
+  .bit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .bit-idx {
+    font-size: 0.55rem;
+    color: var(--dim);
+    letter-spacing: 0;
+    height: 10px;
+  }
+
+  .led {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: var(--led-off);
+    border: 1px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #9ca3af;
+    transition: background 0.1s, box-shadow 0.1s, color 0.1s, border-color 0.1s;
+    position: relative;
+  }
+
+  .led.on {
+    background: var(--led-on);
+    border-color: #15803d;
+    color: #ffffff;
+    box-shadow: 0 0 10px #16a34a55, 0 0 2px #16a34a;
+  }
+
+  .bit:hover .led {
+    border-color: var(--accent);
+  }
+
+  /* Index row below */
+  .idx-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-top: 2px;
+  }
+
+  .idx-cell {
+    width: 38px;
+    text-align: center;
+    font-size: 0.58rem;
+    color: var(--dim);
+  }
+
+  .idx-sep {
+    width: 16px;
+  }
+
+  /* Byte values below */
+  .byte-values {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .byte-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    color: var(--dim);
+  }
+
+  .byte-chip strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .byte-chip.msb { border-color: #9ca3af; }
+
+  /* Error */
+  .err-msg {
+    font-size: 0.75rem;
+    color: var(--warn);
+    height: 1rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 520px) {
+    .led { width: 30px; height: 30px; font-size: 0.75rem; }
+    .nibble-idx { width: calc(4 * 36px + 3 * 4px + 12px); }
+    .idx-cell { width: 30px; }
+    .idx-sep { width: 12px; }
+    .nibble { gap: 4px; }
+    .bit-row { gap: 4px; }
+    .nibble-sep { width: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Herramienta de diagnóstico</h1>
+  <p>Bit Viewer</p>
+</header>
+
+<div class="input-panel">
+  <div class="input-row">
+    <label>Valor</label>
+    <input type="number" id="numInput" value="0" min="0" placeholder="Decimal">
+    <input type="text"   id="hexInput" value="0x0000" placeholder="Hex 0x...">
+  </div>
+  <div class="err-msg" id="errMsg"></div>
+
+  <div class="input-row">
+    <label>Tamaño</label>
+    <div class="mode-group" id="sizeGroup">
+      <button class="mode-btn" data-bits="8">8 bit</button>
+      <button class="mode-btn active" data-bits="16">16 bit</button>
+      <button class="mode-btn" data-bits="32">32 bit</button>
+    </div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+</div>
+
+<div class="bit-grid-wrap">
+  <div id="bitGrid"></div>
+</div>
+
+<script>
+  let currentBits = 16;
+  let currentValue = 0;
+  let updating = false;
+
+  const numInput  = document.getElementById('numInput');
+  const hexInput  = document.getElementById('hexInput');
+  const errMsg    = document.getElementById('errMsg');
+  const sizeGroup = document.getElementById('sizeGroup');
+  const summary   = document.getElementById('summary');
+  const bitGrid   = document.getElementById('bitGrid');
+
+  function maxVal(bits) { return (1 << bits) >>> 0; }
+  function clamp(v, bits) { return ((v >>> 0) & ((bits === 32) ? 0xFFFFFFFF : (maxVal(bits) - 1))); }
+
+  function pad(n, len, radix = 2) {
+    return n.toString(radix).toUpperCase().padStart(len, '0');
+  }
+
+  function updateSummary(val, bits) {
+    const hexDigits = bits / 4;
+    const bitsOn = val.toString(2).split('').filter(b => b === '1').length;
+    const msb = (val >>> (bits - 1)) & 1;
+    const signed = bits < 32
+      ? (msb ? val - maxVal(bits) : val)
+      : (msb ? (val | 0) : val); // int32 for 32-bit
+
+    summary.innerHTML = `
+      <span>DEC <strong>${val}</strong></span>
+      <span class="hex">HEX <strong>0x${pad(val, hexDigits, 16)}</strong></span>
+      <span class="oct">OCT <strong>${val.toString(8)}</strong></span>
+      <span class="bits-on">Bits a 1: <strong>${bitsOn} / ${bits}</strong></span>
+      <span>Signed: <strong>${signed}</strong></span>
+    `;
+  }
+
+  function renderGrid(val, bits) {
+    bitGrid.innerHTML = '';
+
+    const nibbleCount = bits / 4;
+    // Build nibbles right-to-left (LSB group on right)
+    const nibbles = [];
+    for (let n = 0; n < nibbleCount; n++) {
+      const nibbleBits = [];
+      for (let b = 0; b < 4; b++) {
+        const bitIdx = n * 4 + b; // bit index from LSB
+        nibbleBits.push(bitIdx);
+      }
+      nibbles.push(nibbleBits); // each nibble: [lsb..msb] within nibble, left=bit3, right=bit0 visually reversed below
+    }
+    // We want visual: MSB on left, LSB on right
+    // Nibbles displayed left=MSB nibble, right=LSB nibble
+    // Within nibble: left=higher bit, right=lower bit
+
+    // Nibble index labels (byte groups)
+    const nibbleLabelRow = document.createElement('div');
+    nibbleLabelRow.className = 'bit-group-label';
+
+    const bitRow = document.createElement('div');
+    bitRow.className = 'bit-row';
+
+    const idxRow = document.createElement('div');
+    idxRow.className = 'idx-row';
+
+    // Byte value chips
+    const byteValueDiv = document.createElement('div');
+    byteValueDiv.className = 'byte-values';
+
+    // Iterate nibbles from MSB to LSB (for display left-to-right)
+    for (let nIdx = nibbleCount - 1; nIdx >= 0; nIdx--) {
+      // Nibble separator between nibble groups (not before first)
+      if (nIdx < nibbleCount - 1) {
+        const sep = document.createElement('div');
+        sep.className = 'nibble-sep';
+        sep.textContent = '·';
+        bitRow.appendChild(sep);
+
+        const idxSep = document.createElement('div');
+        idxSep.className = 'idx-sep';
+        idxRow.appendChild(idxSep);
+      }
+
+      const nibbleDiv = document.createElement('div');
+      nibbleDiv.className = 'nibble';
+
+      const idxNibbleDiv = document.createElement('div');
+      idxNibbleDiv.className = 'nibble';
+
+      // Within nibble, display bit3..bit0 (high to low)
+      for (let b = 3; b >= 0; b--) {
+        const bitIdx = nIdx * 4 + b;
+        const isOn = (val >>> bitIdx) & 1;
+
+        const bitEl = document.createElement('div');
+        bitEl.className = 'bit';
+        bitEl.dataset.bit = bitIdx;
+
+        const bitIdxLabel = document.createElement('div');
+        bitIdxLabel.className = 'bit-idx';
+        bitIdxLabel.textContent = bitIdx;
+
+        const led = document.createElement('div');
+        led.className = 'led' + (isOn ? ' on' : '');
+        led.textContent = isOn ? '1' : '0';
+
+        bitEl.appendChild(bitIdxLabel);
+        bitEl.appendChild(led);
+
+        // Click to toggle
+        bitEl.addEventListener('click', () => {
+          const toggled = currentValue ^ (1 << bitIdx);
+          setValue(clamp(toggled, currentBits));
+        });
+
+        nibbleDiv.appendChild(bitEl);
+
+        // idx below (hidden, already in bit-idx)
+        const idxCell = document.createElement('div');
+        idxCell.className = 'idx-cell';
+        idxNibbleDiv.appendChild(idxCell);
+      }
+
+      bitRow.appendChild(nibbleDiv);
+      idxRow.appendChild(idxNibbleDiv);
+    }
+
+    bitGrid.appendChild(bitRow);
+
+    // Byte chips (only for >=16 bit)
+    if (bits >= 16) {
+      const byteCount = bits / 8;
+      for (let b = byteCount - 1; b >= 0; b--) {
+        const byteVal = (val >>> (b * 8)) & 0xFF;
+        const chip = document.createElement('div');
+        chip.className = 'byte-chip';
+        const label = byteCount === 4
+          ? ['BYTE 0 (LSB)', 'BYTE 1', 'BYTE 2', 'BYTE 3 (MSB)'][b]
+          : (b === 0 ? 'LOW BYTE' : 'HIGH BYTE');
+        chip.innerHTML = `${label}: <strong>0x${pad(byteVal, 2, 16)} = ${byteVal}</strong>`;
+        byteValueDiv.prepend(chip);
+      }
+      bitGrid.appendChild(byteValueDiv);
+    }
+  }
+
+  function setValue(val) {
+    if (updating) return;
+    updating = true;
+    currentValue = clamp(val, currentBits);
+    const hexDigits = currentBits / 4;
+    numInput.value = currentValue;
+    hexInput.value = '0x' + pad(currentValue, hexDigits, 16);
+    hexInput.className = '';
+    numInput.className = '';
+    errMsg.textContent = '';
+    updateSummary(currentValue, currentBits);
+    renderGrid(currentValue, currentBits);
+    updating = false;
+  }
+
+  numInput.addEventListener('input', () => {
+    if (updating) return;
+    const raw = parseInt(numInput.value, 10);
+    if (isNaN(raw) || raw < 0) {
+      numInput.className = 'error';
+      errMsg.textContent = 'Introduce un entero positivo';
+      return;
+    }
+    const maxv = currentBits === 32 ? 0xFFFFFFFF : maxVal(currentBits) - 1;
+    if (raw > maxv) {
+      numInput.className = 'error';
+      errMsg.textContent = `Máximo para ${currentBits} bits: ${maxv}`;
+      return;
+    }
+    setValue(raw);
+  });
+
+  hexInput.addEventListener('input', () => {
+    if (updating) return;
+    let raw = hexInput.value.trim().replace(/^0x/i, '');
+    const parsed = parseInt(raw, 16);
+    if (isNaN(parsed) || parsed < 0) {
+      hexInput.className = 'error';
+      errMsg.textContent = 'Formato hex inválido (usa 0x1A2B)';
+      return;
+    }
+    setValue(parsed);
+  });
+
+  sizeGroup.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    currentBits = parseInt(btn.dataset.bits);
+    sizeGroup.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setValue(clamp(currentValue, currentBits));
+  });
+
+  // Init
+  setValue(0b0000101001101101); // valor de ejemplo con bits variados
+</script>
+</body>
+</html>
