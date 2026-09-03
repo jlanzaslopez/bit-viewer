@@ -298,13 +298,61 @@
   .badge-warn { background: #fef9c3; color: #854d0e; }
   .badge-err  { background: #fee2e2; color: #991b1b; }
 
-  /* Responsive */
-  @media (max-width: 700px) {
-    .cols { grid-template-columns: 1fr; }
-    .summary { margin-left: 0; }
+  /* ── Responsive ── */
+
+  /* Tablet ancha / escritorio pequeño: 900–1100px
+     El grid de 32b empieza a apretar — reducimos LEDs a 30px */
+  @media (max-width: 1100px) {
     .led { width: 30px; height: 30px; font-size: 0.75rem; }
     .nibble { gap: 4px; }
     .bit-row { gap: 4px; }
+    .nibble-sep { width: 10px; }
+  }
+
+  /* Tablet: 700–900px
+     - Columnas siguen en 2 pero la tabla se queda sin columna "Descripción"
+     - Input bar: el summary cae a segunda línea */
+  @media (max-width: 900px) {
+    .page { padding: 1rem; gap: 1rem; }
+    .input-bar { gap: 1rem; }
+    .summary { margin-left: 0; width: 100%; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+    .td-desc { display: none; }
+    .signal-table th:last-child { display: none; }
+  }
+
+  /* Móvil grande: 600–700px
+     - Las dos columnas pasan a una sola (grid apilado)
+     - La tabla ocupa todo el ancho debajo del grid */
+  @media (max-width: 700px) {
+    .cols, .cols:not(.no-table) { grid-template-columns: 1fr; }
+    .nav-title { display: none; }
+    .nav-sep   { display: none; }
+  }
+
+  /* Móvil pequeño: <480px
+     - LEDs aún más pequeños para que 16b quepa sin scroll
+     - Input bar en columna única
+     - Tabs más compactas */
+  @media (max-width: 480px) {
+    .led { width: 26px; height: 26px; font-size: 0.68rem; border-radius: 4px; }
+    .nibble { gap: 3px; }
+    .bit-row { gap: 3px; }
+    .nibble-sep { width: 8px; font-size: 0.65rem; }
+    .bit-idx { font-size: 0.46rem; }
+    .tab-btn { padding: 0 0.7rem; font-size: 0.68rem; letter-spacing: 0.06em; }
+    .input-bar { padding: 0.75rem 1rem; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+    input[type="number"], input[type="text"] { width: 100%; }
+    .err-msg { min-width: unset; width: 100%; }
+    .page { padding: 0.75rem; }
+    .bit-grid-wrap { padding: 0.85rem 0.85rem 0.75rem; }
+  }
+
+  /* Muy pequeño: <360px — 8b sin scroll, 16b casi justo */
+  @media (max-width: 360px) {
+    .led { width: 22px; height: 22px; font-size: 0.6rem; }
+    .nibble { gap: 2px; }
+    .bit-row { gap: 2px; }
+    .nibble-sep { width: 6px; }
   }
 </style>
 </head>
