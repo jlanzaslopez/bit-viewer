@@ -6,20 +6,21 @@
 <title>Bit Viewer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:       #f3f4f6;
-    --panel:    #ffffff;
-    --border:   #d1d5db;
-    --led-off:  #e5e7eb;
-    --led-on:   #16a34a;
-    --dim:      #9ca3af;
-    --text:     #111827;
-    --accent:   #2563eb;
-    --warn:     #dc2626;
-    --mono:     'JetBrains Mono', 'Courier New', monospace;
+    --bg:      #f3f4f6;
+    --panel:   #ffffff;
+    --border:  #d1d5db;
+    --led-off: #e5e7eb;
+    --led-on:  #16a34a;
+    --dim:     #9ca3af;
+    --text:    #111827;
+    --accent:  #2563eb;
+    --warn:    #dc2626;
+    --nav-bg:  #1e293b;
+    --nav-h:   52px;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
   }
 
   body {
@@ -29,79 +30,101 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
-    gap: 2rem;
   }
 
-  header { text-align: center; }
-  header h1 {
-    font-size: 0.75rem;
-    letter-spacing: 0.25em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-  }
-  header p {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.05em;
-  }
-
-  /* ── Tabs ── */
-  .tabs {
+  /* ── Navbar ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--nav-bg);
+    height: var(--nav-h);
     display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
     gap: 0;
-    border-bottom: 2px solid var(--border);
-    width: 100%;
-    max-width: 900px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-right: 2rem;
+    text-decoration: none;
+  }
+  .nav-logo {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: #fff;
+    letter-spacing: -0.03em;
+    flex-shrink: 0;
+  }
+  .nav-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: 0.08em;
+  }
+  .nav-sep {
+    width: 1px; height: 24px;
+    background: #334155;
+    margin-right: 1.5rem;
   }
   .tab-btn {
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    padding: 0.6rem 1.4rem;
+    letter-spacing: 0.12em;
+    padding: 0 1.1rem;
+    height: var(--nav-h);
     border: none;
     border-bottom: 2px solid transparent;
     background: none;
-    color: var(--dim);
+    color: #94a3b8;
     cursor: pointer;
-    margin-bottom: -2px;
     transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
   }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
+  .tab-btn:hover { color: #f1f5f9; }
+  .tab-btn.active { color: #fff; border-bottom-color: var(--accent); }
+
+  /* ── Page body ── */
+  .page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 1.25rem;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
   }
 
-  /* ── Input panel ── */
-  .input-panel {
+  /* ── Input bar ── */
+  .input-bar {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 1.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    width: 100%;
-    max-width: 900px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
-  .input-row {
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     flex-wrap: wrap;
   }
-  .input-row label {
-    font-size: 0.75rem;
+  .input-group label {
+    font-size: 0.7rem;
     color: var(--dim);
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    min-width: 6rem;
   }
   input[type="number"], input[type="text"] {
     background: var(--bg);
@@ -109,29 +132,29 @@
     border-radius: 4px;
     color: var(--accent);
     font-family: var(--mono);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.65rem;
     outline: none;
     transition: border-color 0.15s;
-    flex: 1;
-    min-width: 140px;
+    width: 160px;
   }
   input[type="number"]:focus, input[type="text"]:focus { border-color: var(--accent); }
   input.error { border-color: var(--warn) !important; color: var(--warn) !important; }
+  .err-msg { font-size: 0.7rem; color: var(--warn); min-width: 180px; }
 
-  .mode-group { display: flex; gap: 0.5rem; }
+  .mode-group { display: flex; gap: 0.4rem; }
   .mode-btn {
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--dim);
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    padding: 0.35rem 0.75rem;
+    padding: 0.3rem 0.65rem;
     border-radius: 4px;
     cursor: pointer;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     transition: all 0.15s;
   }
   .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -139,371 +162,301 @@
 
   .summary {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.2rem;
     flex-wrap: wrap;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--dim);
+    margin-left: auto;
   }
   .summary span strong { color: var(--text); font-weight: 600; }
   .summary span.hex strong { color: #b45309; }
   .summary span.oct strong { color: #0369a1; }
   .summary span.bits-on strong { color: #16a34a; }
 
-  .err-msg { font-size: 0.75rem; color: var(--warn); height: 1rem; }
+  /* ── Two-column layout ── */
+  .cols {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .cols.no-table {
+    grid-template-columns: 1fr;
+  }
 
-  /* ── Bit grid ── */
+  /* ── Left: bit grid ── */
   .bit-grid-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 900px;
+    padding: 1.25rem 1.25rem 1rem;
     overflow-x: auto;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
   .bit-row {
     display: flex;
     align-items: flex-end;
-    gap: 6px;
+    gap: 5px;
     justify-content: flex-end;
     margin-bottom: 0.5rem;
   }
-  .nibble { display: flex; gap: 6px; }
+  .nibble { display: flex; gap: 5px; }
   .nibble-sep {
-    width: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 14px;
+    display: flex; align-items: center; justify-content: center;
     color: var(--border);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     user-select: none;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
   }
   .bit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    user-select: none;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer; user-select: none;
   }
-  .bit-idx {
-    font-size: 0.55rem;
-    color: var(--dim);
-    height: 10px;
-  }
+  .bit-idx { font-size: 0.52rem; color: var(--dim); height: 9px; }
   .led {
-    width: 38px;
-    height: 38px;
+    width: 36px; height: 36px;
     border-radius: 6px;
     background: var(--led-off);
     border: 1px solid #d1d5db;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #9ca3af;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.82rem; font-weight: 700; color: #9ca3af;
     transition: background 0.1s, box-shadow 0.1s, color 0.1s, border-color 0.1s;
   }
   .led.on {
     background: var(--led-on);
     border-color: #15803d;
-    color: #ffffff;
+    color: #fff;
     box-shadow: 0 0 10px #16a34a55, 0 0 2px #16a34a;
   }
   .bit:hover .led { border-color: var(--accent); }
 
-  /* Byte chips */
   .byte-values {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    margin-top: 0.85rem;
+    display: flex; gap: 0.4rem;
+    justify-content: flex-end; flex-wrap: wrap;
   }
   .byte-chip {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.7rem;
-    color: var(--dim);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.67rem; color: var(--dim);
   }
   .byte-chip strong { color: var(--text); font-weight: 600; }
 
-  /* ── Signal table (BOMBA / VALVULA) ── */
+  /* ── Right: signal table ── */
   .signal-table-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
-    width: 100%;
-    max-width: 900px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     overflow: hidden;
+    min-width: 0;
   }
   .signal-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
   .signal-table thead tr {
     background: var(--bg);
     border-bottom: 2px solid var(--border);
   }
   .signal-table th {
-    padding: 0.6rem 1rem;
+    padding: 0.55rem 0.9rem;
     text-align: left;
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--dim);
     font-weight: 600;
   }
   .signal-table td {
-    padding: 0.55rem 1rem;
+    padding: 0.45rem 0.9rem;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
   }
   .signal-table tr:last-child td { border-bottom: none; }
   .signal-table tr:hover td { background: #f9fafb; }
-
-  .td-bit {
-    font-weight: 700;
-    color: var(--dim);
-    width: 3rem;
-    text-align: center;
-  }
-  .td-name { font-weight: 600; color: var(--text); width: 10rem; }
-  .td-state { flex: 1; }
+  .td-bit { font-weight: 700; color: var(--dim); width: 2.5rem; text-align: center; }
+  .td-name { font-weight: 600; color: var(--text); white-space: nowrap; }
+  .td-desc { color: var(--dim); font-size: 0.72rem; }
 
   .state-badge {
     display: inline-block;
-    padding: 0.2rem 0.55rem;
+    padding: 0.18rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.72rem;
+    font-size: 0.69rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
   }
-  .badge-on  { background: #dcfce7; color: #15803d; }
-  .badge-off { background: #f3f4f6; color: #6b7280; }
+  .badge-on   { background: #dcfce7; color: #15803d; }
+  .badge-off  { background: #f3f4f6; color: #6b7280; }
   .badge-warn { background: #fef9c3; color: #854d0e; }
   .badge-err  { background: #fee2e2; color: #991b1b; }
 
   /* Responsive */
-  @media (max-width: 520px) {
+  @media (max-width: 700px) {
+    .cols { grid-template-columns: 1fr; }
+    .summary { margin-left: 0; }
     .led { width: 30px; height: 30px; font-size: 0.75rem; }
     .nibble { gap: 4px; }
     .bit-row { gap: 4px; }
-    .nibble-sep { width: 12px; }
-    .tab-btn { padding: 0.6rem 0.8rem; font-size: 0.72rem; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Herramienta de diagnóstico</h1>
-  <p>Bit Viewer</p>
-</header>
-
-<!-- Tabs -->
-<div class="tabs">
+<!-- ── Navbar ── -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">BV</div>
+    <span class="nav-title">BIT VIEWER</span>
+  </a>
+  <div class="nav-sep"></div>
   <button class="tab-btn active" data-tab="general">GENERAL</button>
   <button class="tab-btn" data-tab="bomba">BOMBA</button>
   <button class="tab-btn" data-tab="valvula">VÁLVULA</button>
-</div>
+</nav>
 
-<!-- Input panel (compartido) -->
-<div class="input-panel">
-  <div class="input-row">
-    <label>Valor</label>
-    <input type="number" id="numInput" value="0" min="0" placeholder="Decimal">
-    <input type="text"   id="hexInput" value="0x0000" placeholder="Hex 0x...">
+<!-- ── Page ── -->
+<div class="page">
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <div class="input-group">
+      <label>Decimal</label>
+      <input type="number" id="numInput" value="0" min="0" placeholder="0">
+    </div>
+    <div class="input-group">
+      <label>Hex</label>
+      <input type="text" id="hexInput" value="0x0000" placeholder="0x...">
+    </div>
+    <div class="input-group">
+      <label>Tamaño</label>
+      <div class="mode-group" id="sizeGroup">
+        <button class="mode-btn" data-bits="8">8b</button>
+        <button class="mode-btn active" data-bits="16">16b</button>
+        <button class="mode-btn" data-bits="32">32b</button>
+      </div>
+    </div>
+    <span class="err-msg" id="errMsg"></span>
+    <div class="summary" id="summary"></div>
   </div>
-  <div class="err-msg" id="errMsg"></div>
-  <div class="input-row">
-    <label>Tamaño</label>
-    <div class="mode-group" id="sizeGroup">
-      <button class="mode-btn" data-bits="8">8 bit</button>
-      <button class="mode-btn active" data-bits="16">16 bit</button>
-      <button class="mode-btn" data-bits="32">32 bit</button>
+
+  <!-- Two-column area -->
+  <div class="cols no-table" id="cols">
+    <div class="bit-grid-wrap">
+      <div id="bitGrid"></div>
+    </div>
+    <div class="signal-table-wrap" id="signalTableWrap" style="display:none">
+      <table class="signal-table">
+        <thead>
+          <tr>
+            <th>Bit</th>
+            <th>Señal</th>
+            <th>Estado</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody id="signalTableBody"></tbody>
+      </table>
     </div>
   </div>
-  <div class="summary" id="summary"></div>
-</div>
 
-<!-- Bit grid (siempre visible) -->
-<div class="bit-grid-wrap">
-  <div id="bitGrid"></div>
-</div>
-
-<!-- Signal table (solo en BOMBA / VALVULA) -->
-<div class="signal-table-wrap" id="signalTableWrap" style="display:none">
-  <table class="signal-table">
-    <thead>
-      <tr>
-        <th>Bit</th>
-        <th>Señal</th>
-        <th>Estado actual</th>
-        <th>Descripción</th>
-      </tr>
-    </thead>
-    <tbody id="signalTableBody"></tbody>
-  </table>
 </div>
 
 <script>
-  // ── Definiciones de señales ──────────────────────────────────────────────
   const SIGNALS = {
     bomba: [
-      {
-        bit: 0, name: 'Fuera de servicio',
-        states: [
-          { val: 0, label: 'En servicio',       cls: 'badge-on',   desc: 'Equipo disponible para operación' },
-          { val: 1, label: 'Fuera de servicio', cls: 'badge-err',  desc: 'Equipo excluido de operación' },
-        ]
-      },
-      {
-        bit: 1, name: 'Manual / Auto',
-        states: [
-          { val: 0, label: 'Manual',  cls: 'badge-warn', desc: 'Modo manual activo' },
-          { val: 1, label: 'Auto',    cls: 'badge-on',   desc: 'Modo automático activo' },
-        ]
-      },
-      {
-        bit: 2, name: 'Disponible',
-        states: [
-          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'Equipo no disponible' },
-          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Equipo listo para arrancar' },
-        ]
-      },
-      {
-        bit: 3, name: 'Conf. marcha',
-        states: [
-          { val: 0, label: 'Sin confirmación', cls: 'badge-off',  desc: 'Sin retorno de marcha' },
-          { val: 1, label: 'Marcha confirmada', cls: 'badge-on',  desc: 'Retorno de marcha activo' },
-        ]
-      },
-      {
-        bit: 4, name: 'Orden marcha',
-        states: [
-          { val: 0, label: 'Parada', cls: 'badge-off', desc: 'Sin orden de marcha' },
-          { val: 1, label: 'Marcha', cls: 'badge-on',  desc: 'Orden de marcha enviada' },
-        ]
-      },
-      {
-        bit: 5, name: 'Local / Remoto',
-        states: [
-          { val: 0, label: 'Local',   cls: 'badge-warn', desc: 'Control desde panel local' },
-          { val: 1, label: 'Remoto',  cls: 'badge-on',   desc: 'Control desde SCADA / PLC' },
-        ]
-      },
+      { bit:0, name:'Fuera de servicio', states:[
+        { val:0, label:'En servicio',       cls:'badge-on',  desc:'Equipo disponible para operación' },
+        { val:1, label:'Fuera de servicio', cls:'badge-err', desc:'Equipo excluido de operación' },
+      ]},
+      { bit:1, name:'Auto / Manual', states:[
+        { val:0, label:'Manual', cls:'badge-warn', desc:'Modo manual activo' },
+        { val:1, label:'Auto',   cls:'badge-on',   desc:'Modo automático activo' },
+      ]},
+      { bit:2, name:'Disponible', states:[
+        { val:0, label:'No disponible', cls:'badge-off', desc:'Equipo no disponible' },
+        { val:1, label:'Disponible',    cls:'badge-on',  desc:'Equipo listo para arrancar' },
+      ]},
+      { bit:3, name:'Conf. marcha', states:[
+        { val:0, label:'Sin confirmación',  cls:'badge-off', desc:'Sin retorno de marcha' },
+        { val:1, label:'Marcha confirmada', cls:'badge-on',  desc:'Retorno de marcha activo' },
+      ]},
+      { bit:4, name:'Orden marcha', states:[
+        { val:0, label:'Parada', cls:'badge-off', desc:'Sin orden de marcha' },
+        { val:1, label:'Marcha', cls:'badge-on',  desc:'Orden de marcha enviada' },
+      ]},
+      { bit:5, name:'Remoto / Local', states:[
+        { val:0, label:'Local',  cls:'badge-warn', desc:'Control desde panel local' },
+        { val:1, label:'Remoto', cls:'badge-on',   desc:'Control desde SCADA / PLC' },
+      ]},
     ],
     valvula: [
-      {
-        bit: 0, name: 'Fuera de servicio',
-        states: [
-          { val: 0, label: 'En servicio',       cls: 'badge-on',   desc: 'Válvula disponible para operación' },
-          { val: 1, label: 'Fuera de servicio', cls: 'badge-err',  desc: 'Válvula excluida de operación' },
-        ]
-      },
-      {
-        bit: 1, name: 'Auto / Manual',
-        states: [
-          { val: 0, label: 'Manual', cls: 'badge-warn', desc: 'Modo manual activo' },
-          { val: 1, label: 'Auto',   cls: 'badge-on',   desc: 'Modo automático activo' },
-        ]
-      },
-      {
-        bit: 2, name: 'Disponible — abrir',
-        states: [
-          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir orden de apertura' },
-          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir orden de apertura' },
-        ]
-      },
-      {
-        bit: 3, name: 'Disponible — cerrar',
-        states: [
-          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir orden de cierre' },
-          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir orden de cierre' },
-        ]
-      },
-      {
-        bit: 4, name: 'Abierta',
-        states: [
-          { val: 0, label: 'No abierta', cls: 'badge-off', desc: 'Fin de carrera de apertura no activo' },
-          { val: 1, label: 'Abierta',    cls: 'badge-on',  desc: 'Fin de carrera de apertura activo' },
-        ]
-      },
-      {
-        bit: 5, name: 'Cerrada',
-        states: [
-          { val: 0, label: 'No cerrada', cls: 'badge-off', desc: 'Fin de carrera de cierre no activo' },
-          { val: 1, label: 'Cerrada',    cls: 'badge-on',  desc: 'Fin de carrera de cierre activo' },
-        ]
-      },
-      {
-        bit: 6, name: 'Remoto / Local',
-        states: [
-          { val: 0, label: 'Local',   cls: 'badge-warn', desc: 'Control desde panel local' },
-          { val: 1, label: 'Remoto',  cls: 'badge-on',   desc: 'Control desde SCADA / PLC' },
-        ]
-      },
-      {
-        bit: 7, name: 'Orden abrir',
-        states: [
-          { val: 0, label: 'Sin orden', cls: 'badge-off', desc: 'Sin orden de apertura activa' },
-          { val: 1, label: 'Abrir',     cls: 'badge-on',  desc: 'Orden de apertura enviada' },
-        ]
-      },
-      {
-        bit: 8, name: 'Orden cerrar',
-        states: [
-          { val: 0, label: 'Sin orden', cls: 'badge-off', desc: 'Sin orden de cierre activa' },
-          { val: 1, label: 'Cerrar',    cls: 'badge-on',  desc: 'Orden de cierre enviada' },
-        ]
-      },
-      {
-        bit: 9, name: 'Abriendo',
-        states: [
-          { val: 0, label: 'Detenida', cls: 'badge-off', desc: 'Válvula no está en movimiento de apertura' },
-          { val: 1, label: 'Abriendo', cls: 'badge-on',  desc: 'Válvula en tránsito hacia abierta' },
-        ]
-      },
-      {
-        bit: 10, name: 'Cerrando',
-        states: [
-          { val: 0, label: 'Detenida', cls: 'badge-off', desc: 'Válvula no está en movimiento de cierre' },
-          { val: 1, label: 'Cerrando', cls: 'badge-on',  desc: 'Válvula en tránsito hacia cerrada' },
-        ]
-      },
-      {
-        bit: 11, name: 'Posición alcanzada',
-        states: [
-          { val: 0, label: 'En tránsito',        cls: 'badge-warn', desc: 'Aún no ha llegado a la posición destino' },
-          { val: 1, label: 'Posición alcanzada', cls: 'badge-on',   desc: 'Válvula ha llegado a la posición solicitada' },
-        ]
-      },
-      {
-        bit: 12, name: 'Disponible — mover',
-        states: [
-          { val: 0, label: 'No disponible', cls: 'badge-off', desc: 'No puede recibir órdenes de movimiento' },
-          { val: 1, label: 'Disponible',    cls: 'badge-on',  desc: 'Lista para recibir cualquier orden de movimiento' },
-        ]
-      },
-      {
-        bit: 13, name: 'Parada',
-        states: [
-          { val: 0, label: 'En movimiento', cls: 'badge-on',  desc: 'Válvula en maniobra' },
-          { val: 1, label: 'Parada',        cls: 'badge-off', desc: 'Válvula detenida, sin maniobra activa' },
-        ]
-      },
+      { bit:0, name:'Fuera de servicio', states:[
+        { val:0, label:'En servicio',       cls:'badge-on',  desc:'Válvula disponible para operación' },
+        { val:1, label:'Fuera de servicio', cls:'badge-err', desc:'Válvula excluida de operación' },
+      ]},
+      { bit:1, name:'Auto / Manual', states:[
+        { val:0, label:'Manual', cls:'badge-warn', desc:'Modo manual activo' },
+        { val:1, label:'Auto',   cls:'badge-on',   desc:'Modo automático activo' },
+      ]},
+      { bit:2, name:'Disponible — abrir', states:[
+        { val:0, label:'No disponible', cls:'badge-off', desc:'No puede recibir orden de apertura' },
+        { val:1, label:'Disponible',    cls:'badge-on',  desc:'Lista para recibir orden de apertura' },
+      ]},
+      { bit:3, name:'Disponible — cerrar', states:[
+        { val:0, label:'No disponible', cls:'badge-off', desc:'No puede recibir orden de cierre' },
+        { val:1, label:'Disponible',    cls:'badge-on',  desc:'Lista para recibir orden de cierre' },
+      ]},
+      { bit:4, name:'Abierta', states:[
+        { val:0, label:'No abierta', cls:'badge-off', desc:'Fin de carrera de apertura no activo' },
+        { val:1, label:'Abierta',    cls:'badge-on',  desc:'Fin de carrera de apertura activo' },
+      ]},
+      { bit:5, name:'Cerrada', states:[
+        { val:0, label:'No cerrada', cls:'badge-off', desc:'Fin de carrera de cierre no activo' },
+        { val:1, label:'Cerrada',    cls:'badge-on',  desc:'Fin de carrera de cierre activo' },
+      ]},
+      { bit:6, name:'Remoto / Local', states:[
+        { val:0, label:'Local',  cls:'badge-warn', desc:'Control desde panel local' },
+        { val:1, label:'Remoto', cls:'badge-on',   desc:'Control desde SCADA / PLC' },
+      ]},
+      { bit:7, name:'Orden abrir', states:[
+        { val:0, label:'Sin orden', cls:'badge-off', desc:'Sin orden de apertura activa' },
+        { val:1, label:'Abrir',     cls:'badge-on',  desc:'Orden de apertura enviada' },
+      ]},
+      { bit:8, name:'Orden cerrar', states:[
+        { val:0, label:'Sin orden', cls:'badge-off', desc:'Sin orden de cierre activa' },
+        { val:1, label:'Cerrar',    cls:'badge-on',  desc:'Orden de cierre enviada' },
+      ]},
+      { bit:9, name:'Abriendo', states:[
+        { val:0, label:'Detenida', cls:'badge-off', desc:'No está en movimiento de apertura' },
+        { val:1, label:'Abriendo', cls:'badge-on',  desc:'En tránsito hacia abierta' },
+      ]},
+      { bit:10, name:'Cerrando', states:[
+        { val:0, label:'Detenida', cls:'badge-off', desc:'No está en movimiento de cierre' },
+        { val:1, label:'Cerrando', cls:'badge-on',  desc:'En tránsito hacia cerrada' },
+      ]},
+      { bit:11, name:'Posición alcanzada', states:[
+        { val:0, label:'En tránsito',        cls:'badge-warn', desc:'Aún no ha llegado a posición destino' },
+        { val:1, label:'Posición alcanzada', cls:'badge-on',   desc:'Ha llegado a la posición solicitada' },
+      ]},
+      { bit:12, name:'Disponible — mover', states:[
+        { val:0, label:'No disponible', cls:'badge-off', desc:'No puede recibir órdenes de movimiento' },
+        { val:1, label:'Disponible',    cls:'badge-on',  desc:'Lista para cualquier orden de movimiento' },
+      ]},
+      { bit:13, name:'Parada', states:[
+        { val:0, label:'En movimiento', cls:'badge-on',  desc:'Válvula en maniobra' },
+        { val:1, label:'Parada',        cls:'badge-off', desc:'Sin maniobra activa' },
+      ]},
     ]
   };
 
-  // ── Estado global ────────────────────────────────────────────────────────
   let currentBits  = 16;
   let currentValue = 0;
   let currentTab   = 'general';
@@ -517,8 +470,9 @@
   const bitGrid         = document.getElementById('bitGrid');
   const signalTableWrap = document.getElementById('signalTableWrap');
   const signalTableBody = document.getElementById('signalTableBody');
+  const cols            = document.getElementById('cols');
 
-  // ── Tabs ─────────────────────────────────────────────────────────────────
+  // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -528,112 +482,84 @@
     });
   });
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
   function maxVal(bits) { return (1 << bits) >>> 0; }
   function clamp(v, bits) { return (v >>> 0) & (bits === 32 ? 0xFFFFFFFF : maxVal(bits) - 1); }
-  function pad(n, len, radix = 2) { return n.toString(radix).toUpperCase().padStart(len, '0'); }
+  function pad(n, len, radix=2) { return n.toString(radix).toUpperCase().padStart(len, '0'); }
 
-  // ── Summary ──────────────────────────────────────────────────────────────
   function updateSummary(val, bits) {
-    const hexDigits = bits / 4;
-    const bitsOn = val.toString(2).split('').filter(b => b === '1').length;
-    const msb    = (val >>> (bits - 1)) & 1;
-    const signed = bits < 32 ? (msb ? val - maxVal(bits) : val) : (msb ? (val | 0) : val);
+    const hd   = bits / 4;
+    const bon  = val.toString(2).split('').filter(b => b==='1').length;
+    const msb  = (val >>> (bits-1)) & 1;
+    const sgn  = bits < 32 ? (msb ? val-maxVal(bits) : val) : (msb ? (val|0) : val);
     summary.innerHTML = `
       <span>DEC <strong>${val}</strong></span>
-      <span class="hex">HEX <strong>0x${pad(val, hexDigits, 16)}</strong></span>
+      <span class="hex">HEX <strong>0x${pad(val,hd,16)}</strong></span>
       <span class="oct">OCT <strong>${val.toString(8)}</strong></span>
-      <span class="bits-on">Bits a 1: <strong>${bitsOn} / ${bits}</strong></span>
-      <span>Signed: <strong>${signed}</strong></span>
-    `;
+      <span class="bits-on">Bits a 1: <strong>${bon}/${bits}</strong></span>
+      <span>Signed: <strong>${sgn}</strong></span>`;
   }
 
-  // ── Bit grid ─────────────────────────────────────────────────────────────
   function renderGrid(val, bits) {
     bitGrid.innerHTML = '';
-    const nibbleCount = bits / 4;
-    const bitRow      = document.createElement('div');
-    bitRow.className  = 'bit-row';
-    const byteValueDiv = document.createElement('div');
-    byteValueDiv.className = 'byte-values';
+    const nc = bits / 4;
+    const row = document.createElement('div');
+    row.className = 'bit-row';
 
-    for (let nIdx = nibbleCount - 1; nIdx >= 0; nIdx--) {
-      if (nIdx < nibbleCount - 1) {
+    for (let n = nc-1; n >= 0; n--) {
+      if (n < nc-1) {
         const sep = document.createElement('div');
-        sep.className   = 'nibble-sep';
-        sep.textContent = '·';
-        bitRow.appendChild(sep);
+        sep.className = 'nibble-sep'; sep.textContent = '·';
+        row.appendChild(sep);
       }
-      const nibbleDiv = document.createElement('div');
-      nibbleDiv.className = 'nibble';
-
+      const nib = document.createElement('div');
+      nib.className = 'nibble';
       for (let b = 3; b >= 0; b--) {
-        const bitIdx = nIdx * 4 + b;
-        const isOn   = (val >>> bitIdx) & 1;
-
-        const bitEl = document.createElement('div');
-        bitEl.className = 'bit';
-
-        const bitIdxLabel = document.createElement('div');
-        bitIdxLabel.className   = 'bit-idx';
-        bitIdxLabel.textContent = bitIdx;
-
-        const led = document.createElement('div');
-        led.className   = 'led' + (isOn ? ' on' : '');
-        led.textContent = isOn ? '1' : '0';
-
-        bitEl.appendChild(bitIdxLabel);
-        bitEl.appendChild(led);
-        bitEl.addEventListener('click', () => {
-          setValue(clamp(currentValue ^ (1 << bitIdx), currentBits));
-        });
-        nibbleDiv.appendChild(bitEl);
+        const idx = n*4+b;
+        const on  = (val >>> idx) & 1;
+        const be  = document.createElement('div'); be.className = 'bit';
+        const bi  = document.createElement('div'); bi.className = 'bit-idx'; bi.textContent = idx;
+        const led = document.createElement('div'); led.className = 'led'+(on?' on':''); led.textContent = on?'1':'0';
+        be.appendChild(bi); be.appendChild(led);
+        be.addEventListener('click', () => setValue(clamp(currentValue^(1<<idx), currentBits)));
+        nib.appendChild(be);
       }
-      bitRow.appendChild(nibbleDiv);
+      row.appendChild(nib);
     }
-    bitGrid.appendChild(bitRow);
+    bitGrid.appendChild(row);
 
     if (bits >= 16) {
-      const byteCount = bits / 8;
-      for (let b = byteCount - 1; b >= 0; b--) {
-        const byteVal = (val >>> (b * 8)) & 0xFF;
-        const chip = document.createElement('div');
-        chip.className = 'byte-chip';
-        const label = byteCount === 4
-          ? ['BYTE 0 (LSB)', 'BYTE 1', 'BYTE 2', 'BYTE 3 (MSB)'][b]
-          : (b === 0 ? 'LOW BYTE' : 'HIGH BYTE');
-        chip.innerHTML = `${label}: <strong>0x${pad(byteVal, 2, 16)} = ${byteVal}</strong>`;
-        byteValueDiv.prepend(chip);
+      const bc = bits/8;
+      const bv = document.createElement('div'); bv.className = 'byte-values';
+      for (let b = bc-1; b >= 0; b--) {
+        const bval = (val >>> (b*8)) & 0xFF;
+        const chip = document.createElement('div'); chip.className = 'byte-chip';
+        const lbl  = bc===4 ? ['BYTE 0 (LSB)','BYTE 1','BYTE 2','BYTE 3 (MSB)'][b] : (b===0?'LOW BYTE':'HIGH BYTE');
+        chip.innerHTML = `${lbl}: <strong>0x${pad(bval,2,16)} = ${bval}</strong>`;
+        bv.prepend(chip);
       }
-      bitGrid.appendChild(byteValueDiv);
+      bitGrid.appendChild(bv);
     }
   }
 
-  // ── Signal table ──────────────────────────────────────────────────────────
   function renderSignalTable(val, tab) {
-    const signals = SIGNALS[tab];
-    if (!signals || signals.length === 0) {
-      signalTableWrap.style.display = 'none';
-      return;
-    }
+    const sigs = SIGNALS[tab];
+    if (!sigs || !sigs.length) { signalTableWrap.style.display='none'; cols.classList.add('no-table'); return; }
     signalTableWrap.style.display = 'block';
+    cols.classList.remove('no-table');
     signalTableBody.innerHTML = '';
-
-    signals.forEach(sig => {
-      const bitVal = (val >>> sig.bit) & 1;
-      const state  = sig.states.find(s => s.val === bitVal) || sig.states[0];
+    sigs.forEach(sig => {
+      const bv    = (val >>> sig.bit) & 1;
+      const state = sig.states.find(s => s.val===bv) || sig.states[0];
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="td-bit">${sig.bit}</td>
         <td class="td-name">${sig.name}</td>
-        <td class="td-state"><span class="state-badge ${state.cls}">${state.label}</span></td>
-        <td style="color:var(--dim);font-size:0.75rem">${state.desc}</td>
-      `;
+        <td><span class="state-badge ${state.cls}">${state.label}</span></td>
+        <td class="td-desc">${state.desc}</td>`;
       signalTableBody.appendChild(tr);
     });
   }
 
-  // ── Render all ───────────────────────────────────────────────────────────
   function renderAll() {
     updateSummary(currentValue, currentBits);
     renderGrid(currentValue, currentBits);
@@ -641,51 +567,36 @@
       renderSignalTable(currentValue, currentTab);
     } else {
       signalTableWrap.style.display = 'none';
+      cols.classList.add('no-table');
     }
   }
 
-  // ── setValue ─────────────────────────────────────────────────────────────
   function setValue(val) {
     if (updating) return;
     updating = true;
     currentValue = clamp(val, currentBits);
-    const hexDigits = currentBits / 4;
-    numInput.value   = currentValue;
-    hexInput.value   = '0x' + pad(currentValue, hexDigits, 16);
-    hexInput.classList.remove('error');
+    numInput.value = currentValue;
+    hexInput.value = '0x'+pad(currentValue, currentBits/4, 16);
     numInput.classList.remove('error');
+    hexInput.classList.remove('error');
     errMsg.textContent = '';
     renderAll();
     updating = false;
   }
 
-  // ── Inputs ───────────────────────────────────────────────────────────────
   numInput.addEventListener('input', () => {
     if (updating) return;
-    const raw  = parseInt(numInput.value, 10);
-    const maxv = currentBits === 32 ? 0xFFFFFFFF : maxVal(currentBits) - 1;
-    if (isNaN(raw) || raw < 0) {
-      numInput.classList.add('error');
-      errMsg.textContent = 'Introduce un entero positivo';
-      return;
-    }
-    if (raw > maxv) {
-      numInput.classList.add('error');
-      errMsg.textContent = `Máximo para ${currentBits} bits: ${maxv}`;
-      return;
-    }
+    const raw = parseInt(numInput.value, 10);
+    const max = currentBits===32 ? 0xFFFFFFFF : maxVal(currentBits)-1;
+    if (isNaN(raw)||raw<0) { numInput.classList.add('error'); errMsg.textContent='Introduce un entero positivo'; return; }
+    if (raw>max) { numInput.classList.add('error'); errMsg.textContent=`Máximo ${currentBits}b: ${max}`; return; }
     setValue(raw);
   });
 
   hexInput.addEventListener('input', () => {
     if (updating) return;
-    const raw    = hexInput.value.trim().replace(/^0x/i, '');
-    const parsed = parseInt(raw, 16);
-    if (isNaN(parsed) || parsed < 0) {
-      hexInput.classList.add('error');
-      errMsg.textContent = 'Formato hex inválido (usa 0x1A2B)';
-      return;
-    }
+    const parsed = parseInt(hexInput.value.trim().replace(/^0x/i,''), 16);
+    if (isNaN(parsed)||parsed<0) { hexInput.classList.add('error'); errMsg.textContent='Formato hex inválido'; return; }
     setValue(parsed);
   });
 
@@ -698,7 +609,6 @@
     setValue(clamp(currentValue, currentBits));
   });
 
-  // Init
   setValue(0);
 </script>
 </body>
